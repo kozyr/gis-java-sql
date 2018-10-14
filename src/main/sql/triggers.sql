@@ -1,0 +1,5 @@
+CREATE TRIGGER update_geom_trigger
+  BEFORE INSERT OR UPDATE
+  ON ride
+  FOR EACH ROW
+  EXECUTE PROCEDURE update_geom();
