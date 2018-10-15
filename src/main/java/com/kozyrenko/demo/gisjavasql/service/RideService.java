@@ -1,5 +1,6 @@
 package com.kozyrenko.demo.gisjavasql.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.kozyrenko.demo.gisjavasql.model.Ride;
 import com.kozyrenko.demo.gisjavasql.repository.RideRepository;
 import com.kozyrenko.demo.gisjavasql.util.TransformHelper;
@@ -34,14 +35,10 @@ public class RideService {
         return result;
     }
 
-    public List<Ride> findByEndLocation(double lat, double lon, int radius) {
-        List<Ride> result = Collections.emptyList();
-        try {
-            Point center = TransformHelper.getInstance().transform(lat, lon);
-            result = rideRepo.findByEndLocation(center, (float) (radius / TransformHelper.AUSTIN_DISTORTION));
-        } catch (TransformException e) {
-            LOG.error("Could not transform " + lat + ", " + lon + " to geom!");
-        }
+    public JsonNode findByEndLocation(double lat, double lon, int radius) {
+        JsonNode result = rideRepo.findByEndLocation(lat, lon, radius);
+        LOG.info("output: " + result.asText());
         return result;
+
     }
 }
