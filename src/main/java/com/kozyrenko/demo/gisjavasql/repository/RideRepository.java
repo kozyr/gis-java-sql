@@ -18,10 +18,6 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
     List<Ride> findByStartLocation(@Param("point") Point point, @Param("radius") float radius);
 
     @Transactional(readOnly = true)
-    @Query("SELECT r FROM Ride r where dwithin(:point, r.endGeom, :radius)=true")
-    List<Ride> findByEndLocation(@Param("point") Point point, @Param("radius") float radius);
-
-    @Transactional(readOnly = true)
     @Query(value = "SELECT json_build_object(" +
             "         'type', 'FeatureCollection'," +
             "         'features', json_agg(" +
@@ -37,6 +33,4 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
             "WHERE st_dwithin(ride.end_geom,ST_Transform(ST_SetSRID(ST_Point(:lon,:lat),4326),3857),:radius)",
     nativeQuery = true)
     JsonNode findByEndLocation(@Param("lat") double lat, @Param("lon") double lon, @Param("radius") int radius);
-
-
 }

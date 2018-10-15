@@ -37,7 +37,7 @@ public class RideService {
 
     public JsonNode findByEndLocation(double lat, double lon, int radius) {
         JsonNode result = rideRepo.findByEndLocation(lat, lon, radius);
-        LOG.info("output: " + result.asText());
+
         return result;
 
     }
