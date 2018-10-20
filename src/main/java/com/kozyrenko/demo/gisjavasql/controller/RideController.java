@@ -19,9 +19,9 @@ public class RideController {
     private RideService rideService;
 
 
-    @GetMapping("/")
+    @GetMapping("/welcome")
     public String index() {
-        return "GIS Demo";
+        return "Hi there";
     }
 
     @GetMapping(value = "/nearStart",
@@ -46,6 +46,7 @@ public class RideController {
         Feature feature = new Feature();
         feature.setId(String.valueOf(ride.getId()));
         feature.setGeometry(new Point(ride.getStartLocationLong(), ride.getStartLocationLat()));
+        // set whatever features you want to return
         feature.setProperty("driverRating", ride.getDriverRating());
         feature.setProperty("riderRating", ride.getRiderRating());
 

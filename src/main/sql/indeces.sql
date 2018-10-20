@@ -1,2 +1,2 @@
-CREATE INDEX idx_ride_geom ON ride USING gist(geom);
-CREATE INDEX idx_ride_driver_rating on ride(driver_rating);                                                                  ;
+CREATE INDEX idx_ride_start_geom ON ride USING gist(start_geom);
+CREATE INDEX idx_ride_end_geom ON ride USING gist(end_geom);
