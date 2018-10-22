@@ -31,6 +31,7 @@ $(document).ready(function () {
             map.addLayer({
                 "id": "rides",
                 "type": "symbol",
+                "icon-allow-overlap": true,
                 "source": "current",
                 "layout": {
                     "icon-image": "rocket-15"

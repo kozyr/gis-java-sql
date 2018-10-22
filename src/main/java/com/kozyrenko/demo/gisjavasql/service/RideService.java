@@ -25,6 +25,7 @@ public class RideService {
     private RideRepository rideRepo;
 
     public List<Ride> findByStartLocation(double lat, double lon, int radius) {
+        LOG.info(String.format("Looking for start locations with lat = %f, lon = %f and radius = %d", lat, lon, radius ));
         List<Ride> result = Collections.emptyList();
         try {
             Point center = TransformHelper.getInstance().transform(lat, lon);
@@ -32,13 +33,19 @@ public class RideService {
         } catch (TransformException e) {
             LOG.error("Could not transform " + lat + ", " + lon + " to geom!");
         }
+        LOG.info("Start query complete: " + result.size());
         return result;
     }
 
     public JsonNode findByEndLocation(double lat, double lon, int radius) {
         LOG.info(String.format("Looking for end locations with lat = %f, lon = %f and radius = %d", lat, lon, radius ));
         JsonNode result = rideRepo.findByEndLocation(lat, lon, radius);
-        LOG.info("Query complete");
+        JsonNode features = result.get("features");
+        int size = 0;
+        if (features != null) {
+            size = features.size();
+        }
+        LOG.info("End query complete: " + size);
         return result;
 
     }

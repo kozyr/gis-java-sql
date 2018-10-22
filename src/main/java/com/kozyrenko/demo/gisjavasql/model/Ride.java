@@ -8,10 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Ride {
-    @Id
-    private Long id;
+    @JsonIgnore private Point startGeom;
+    @JsonIgnore private Point endGeom;
+    @Id private Long id;
     private float distanceTravelled;
     private double endLocationLat;
     private double endLocationLong;
@@ -23,11 +23,6 @@ public class Ride {
     private double startLocationLong;
     private double startLocationLat;
     private int riderId;
-
-    @JsonIgnore
-    private Point startGeom;
-    @JsonIgnore
-    private Point endGeom;
 
     public Long getId() {
         return id;

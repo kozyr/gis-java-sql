@@ -15,7 +15,7 @@ import java.util.List;
 public interface RideRepository extends JpaRepository<Ride, Long> {
     @Transactional(readOnly = true)
     @Query("SELECT r FROM Ride r where dwithin(:point, r.startGeom, :radius)=true")
-    List<Ride> findByStartLocation(@Param("point") Point point, @Param("radius") float radius);
+    List<Ride> findByStartLocation(@Param("point") Point center, @Param("radius") float radius);
 
     @Transactional(readOnly = true)
     @Query(value = "SELECT json_build_object(" +
@@ -25,12 +25,12 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
             "                         'type',       'Feature'," +
             "                         'id',         id," +
             "                         'geometry',   ST_AsGeoJSON(ST_Point(end_location_long,end_location_lat))\\:\\:json," +
-            "                         'properties', row_to_json(ride)\\:\\:jsonb - 'end_geom' - 'start_geom'" +
+            "                           'properties',   row_to_json(ride)\\:\\:jsonb - 'end_geom' - 'end_location_long' - 'end_location_lat'" +
             "                        )" +
             "             )" +
             "          )" +
-            " FROM ride " +
-            "WHERE st_dwithin(ride.end_geom,ST_Transform(ST_SetSRID(ST_Point(:lon,:lat),4326),3857),:radius)",
+            " FROM (select id, driver_rating, rider_rating, end_geom, end_location_long, end_location_lat from ride) ride " +
+            "WHERE st_dwithin(ride.end_geom,ST_Transform(ST_SetSRID(ST_Point(:lon,:lat),4326),3857),:radius) limit 10000",
     nativeQuery = true)
     JsonNode findByEndLocation(@Param("lat") double lat, @Param("lon") double lon, @Param("radius") int radius);
 }
