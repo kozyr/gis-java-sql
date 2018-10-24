@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-gis
+  labels:
+    app: demo-gis
+    tier: web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: demo-gis
+      tier: web
+  template:
+    metadata:
+      labels:
+        app: demo-gis
+        tier: web
+    spec:
+      containers:
+      - name: demo-gis-container
+        image: gcr.io/{{YOUR_PROJECT_ID}}/demo-gis:v1
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            memory: "1Gi"
+          requests:
+            memory: "1Gi"
+        # The following environment variables will contain the database host,
+        # user and password to connect to the PostgreSQL instance.
+        env:
+        - name: POSTGRES_DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: demo-gis-db-credentials
+              key: username
+        - name: POSTGRES_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: demo-gis-db-credentials
+              key: password  
+      - name: cloudsql-proxy
+        image: gcr.io/cloudsql-docker/gce-proxy:1.11
+        command: ["/cloud_sql_proxy",
+                    "-instances={{YOUR-PROJECT_ID}}:us-central1:demo=tcp:5432",
+                    "-credential_file=/secrets/cloudsql/credentials.json"]
+        volumeMounts:
+          - name: demo-gis-instance-credentials
+            mountPath: /secrets/cloudsql
+            readOnly: true
+      # [START volumes]
+      volumes:
+      - name: demo-gis-instance-credentials
+        secret:
+          secretName: demo-gis-instance-credentials
